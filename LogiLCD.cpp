@@ -3,7 +3,6 @@ A Docile Sloth 2016 (adocilesloth@gmail.com)
 *******************************************/
 
 #include <obs-module.h>
-#include <fstream>
 
 #include "LCDThreads.h"
 
@@ -18,7 +17,7 @@ bool running = true;
 
 bool obs_module_load(void)
 {
-	if(!LogiLcdInit(L"OBS", LOGI_LCD_TYPE_MONO || LOGI_LCD_TYPE_COLOR))
+	if(!LogiLcdInit(L"OBS", LOGI_LCD_TYPE_MONO | LOGI_LCD_TYPE_COLOR))
 	{
 		running = false;
 		return true;
