@@ -48,13 +48,15 @@ void Mono(atomic<bool>& close)
 	//stream info
 	bool firstime = true;
 
-	const char* streamName[4] = {"simple_stream", "adv_stream", "simple_file_output", "adv_file_output"};
+	const char* streamName[5] = {"simple_stream", "adv_stream", "simple_file_output", "adv_file_output", "adv_ffmpeg_output"};
 	bool streaming = false;
 	int indx = 0;
 
 	//ofstream outfile;
 	//outfile.open("D:/OBS/build32/rundir/Release/obs-plugins/32bit/outfile.txt");
 	//outfile << obs_output_active(streamOutput) << endl;	
+
+	Sleep(1000);
 
 	while(!close) //Text line length  is 26 characters
 	{
@@ -77,6 +79,11 @@ void Mono(atomic<bool>& close)
 		else if(obs_output_active(obs_get_output_by_name("adv_file_output")))
 		{
 			indx = 3;
+			streaming = true;
+		}
+		else if(obs_output_active(obs_get_output_by_name("adv_ffmpeg_output")))
+		{
+			indx = 4;
 			streaming = true;
 		}
 		else
@@ -126,7 +133,7 @@ void Mono(atomic<bool>& close)
 
 		//scene information
 		scene = L"Scene: ";
-		//scene.append(OBSGetSceneName());
+		scene.append(getScene());
 		wchar_t *name = new wchar_t[scene.length() + 1];
 		wcscpy(name, scene.c_str());	//convert to wchar_t
 		LogiLcdMonoSetText(1, name);	//print

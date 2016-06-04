@@ -51,11 +51,13 @@ void Colour(atomic<bool>& close)
 	//stream info
 	bool firstime = true;
 
-	const char* streamName[4] = {"simple_stream", "adv_stream", "simple_file_output", "adv_file_output"};
+	const char* streamName[5] = {"simple_stream", "adv_stream", "simple_file_output", "adv_file_output", "adv_ffmpeg_output"};
 	bool streaming = false;
 	int indx = 0;
 
 	LogiLcdColorSetTitle(L"OBS", 255, 255, 255);
+
+	Sleep(1000);
 
 	while (!close)
 	{
@@ -78,6 +80,11 @@ void Colour(atomic<bool>& close)
 		else if(obs_output_active(obs_get_output_by_name("adv_file_output")))
 		{
 			indx = 3;
+			streaming = true;
+		}
+		else if(obs_output_active(obs_get_output_by_name("adv_ffmpeg_output")))
+		{
+			indx = 4;
 			streaming = true;
 		}
 		else
@@ -120,7 +127,7 @@ void Colour(atomic<bool>& close)
 
 		//get scene information
 		scene = L"Scene: ";
-		//scene.append(OBSGetSceneName());
+		scene.append(getScene());
 		wchar_t *name = new wchar_t[scene.length() + 1];
 		wcscpy(name, scene.c_str());	//convert to wchar_t
 		LogiLcdColorSetText(1, name, 255, 255, 255); 
