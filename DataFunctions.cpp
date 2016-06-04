@@ -56,6 +56,8 @@ std::wstring getScene()
 	obs_source_t * transitionUsed = obs_get_output_source(0);
 	obs_source_t * sceneUsed = obs_transition_get_active_source(transitionUsed);
 	const char *sceneUsedName = obs_source_get_name(sceneUsed);
+	obs_source_release(transitionUsed);
+	obs_source_release(sceneUsed);
 	std::string sceneName = sceneUsedName;
 	std::wstring wsceneName = s2ws(sceneName);
 	return wsceneName;
