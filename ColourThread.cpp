@@ -50,48 +50,14 @@ void Colour(atomic<bool>& close)
 
 	//stream info
 	bool firstime = true;
-
-	const char* streamName[5] = {"simple_stream", "adv_stream", "simple_file_output", "adv_file_output", "adv_ffmpeg_output"};
-	bool streaming = false;
-	int indx = 0;
+	obs_output_t* output;
 
 	LogiLcdColorSetTitle(L"OBS", 255, 255, 255);
 
-	Sleep(1000);
+	Sleep(5000);
 
 	while (!close)
 	{
-		//see what's streaming if anything
-		if(obs_output_active(obs_get_output_by_name("simple_stream")))
-		{
-			indx = 0;
-			streaming = true;
-		}
-		else if(obs_output_active(obs_get_output_by_name("adv_stream")))
-		{
-			indx = 1;
-			streaming = true;
-		}
-		else if(obs_output_active(obs_get_output_by_name("simple_file_output")))
-		{
-			indx = 2;
-			streaming = true;
-		}
-		else if(obs_output_active(obs_get_output_by_name("adv_file_output")))
-		{
-			indx = 3;
-			streaming = true;
-		}
-		else if(obs_output_active(obs_get_output_by_name("adv_ffmpeg_output")))
-		{
-			indx = 4;
-			streaming = true;
-		}
-		else
-		{
-			streaming = false;
-		}
-
 		//mute and deafen buttons
 		if(leftlast == true &&  LogiLcdIsButtonPressed(LOGI_LCD_COLOR_BUTTON_LEFT) == false) //button released
 		{
@@ -116,7 +82,14 @@ void Colour(atomic<bool>& close)
 		//stream and preview buttons
 		if(oklast == true &&  LogiLcdIsButtonPressed(LOGI_LCD_COLOR_BUTTON_OK) == false) //button released
 		{
-			
+			if(obs_frontend_streaming_active())
+			{
+				obs_frontend_streaming_stop();
+			}
+			else
+			{
+				obs_frontend_streaming_start();
+			}
 		}
 		if(cancellast == true &&  LogiLcdIsButtonPressed(LOGI_LCD_COLOR_BUTTON_CANCEL) == false) //button released
 		{
@@ -134,7 +107,7 @@ void Colour(atomic<bool>& close)
 		delete [] name;					//delete temp crap
 		scene = L"";
 
-		if(obs_output_active(obs_get_output_by_name(streamName[indx])))	//streaming
+		if(obs_frontend_streaming_active() || obs_frontend_recording_active())	//streaming
 		{
 			//live
 			LogiLcdColorSetText(0, L"Live \u25CF", 255, 0, 0);
@@ -153,7 +126,7 @@ void Colour(atomic<bool>& close)
 
 			//fps
 			sfps << L"FPS: ";
-			getFPS(fps, lastframes, fpslastime, streamName[indx]);
+			getFPS(fps, lastframes, fpslastime);
 			if(fps < 10)
 			{
 				sfps << L"0";
@@ -179,19 +152,29 @@ void Colour(atomic<bool>& close)
 
 			//bitrate
 			sbyte << L"Bitrate: ";
-			getbps(bitrate, lastbytes, bpslastime, streamName[indx]);
+			getbps(bitrate, lastbytes, bpslastime);
 			sbyte << int(bitrate) << L"kb/s";
 			wchar_t *wbit = new wchar_t[sbyte.str().length() +1];
 			wcscpy(wbit, sbyte.str().c_str());				//copy string
 			LogiLcdColorSetText(3, wbit, 255, 255, 255);	//print to lcd
 			delete [] wbit;
 			sbyte.str(L"");
+
+			obs_output_t* output;
+			if(obs_frontend_streaming_active())
+			{
+				output = obs_frontend_get_streaming_output();
+			}
+			else if(obs_frontend_recording_active())
+			{
+				output = obs_frontend_get_recording_output();
+			}
 			
 			//dropped frames
 			frames << L"Dropped Frames: ";
-			dropped = obs_output_get_frames_dropped(obs_get_output_by_name(streamName[indx]));
+			dropped = obs_output_get_frames_dropped(output);
 			frames << dropped << L"(";
-			total  = obs_output_get_total_frames(obs_get_output_by_name(streamName[indx]));
+			total  = obs_output_get_total_frames(output);
 			percent = (double(dropped)/total)*100;
 			frames << fixed << setprecision(2) << percent << L"%)";
 			wchar_t *droppedframes = new wchar_t[frames.str().length() +1];

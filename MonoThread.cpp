@@ -47,51 +47,25 @@ void Mono(atomic<bool>& close)
 
 	//stream info
 	bool firstime = true;
-
-	const char* streamName[5] = {"simple_stream", "adv_stream", "simple_file_output", "adv_file_output", "adv_ffmpeg_output"};
-	bool streaming = false;
-	int indx = 0;
+	obs_output_t* output;
 
 	//ofstream outfile;
 	//outfile.open("D:/OBS/build32/rundir/Release/obs-plugins/32bit/outfile.txt");
 	//outfile << obs_output_active(streamOutput) << endl;	
 
-	Sleep(1000);
+	Sleep(5000);
 
 	while(!close) //Text line length  is 26 characters
 	{
 		//see what's streaming if anything
-		if(obs_output_active(obs_get_output_by_name("simple_stream")))
+		/*if(obs_frontend_streaming_active() || obs_frontend_recording_active())
 		{
-			indx = 0;
-			streaming = true;
-		}
-		else if(obs_output_active(obs_get_output_by_name("adv_stream")))
-		{
-			indx = 1;
-			streaming = true;
-		}
-		else if(obs_output_active(obs_get_output_by_name("simple_file_output")))
-		{
-			indx = 2;
-			streaming = true;
-		}
-		else if(obs_output_active(obs_get_output_by_name("adv_file_output")))
-		{
-			indx = 3;
-			streaming = true;
-		}
-		else if(obs_output_active(obs_get_output_by_name("adv_ffmpeg_output")))
-		{
-			indx = 4;
 			streaming = true;
 		}
 		else
 		{
 			streaming = false;
-		}
-
-		dvol = obs_get_master_volume();
+		}*/
 
 		///mute and deafen buttons
 		/*if(miclast == true && LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_1) == false) //button released
@@ -100,22 +74,28 @@ void Mono(atomic<bool>& close)
 		}*/
 		/*if(desklast == true && LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_2) == false) //button rleased
 		{
+			if(obs_source_muted(sceneUsed))
+			{
+				obs_source_set_muted(sceneUsed, false);
+			}
+			else
+			{
+				obs_source_set_muted(sceneUsed, true);
+			}
 		}*/
 		//miclast = LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_1);
 		//desklast = LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_2);
 		//stream and preview buttons
 		if(livelast == true && LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_0) == false)
 		{
-			/*if(obs_output_active(obs_get_output_by_name(streamName)))
+			if(obs_frontend_streaming_active())
 			{
-				//obs_output_stop(streamOutput);
-				streaming = !streaming;
+				obs_frontend_streaming_stop();
 			}
 			else
 			{
-				//obs_output_start(streamOutput);
-				streaming = !streaming;
-			}*/
+				obs_frontend_streaming_start();
+			}
 		}
 		if(altdisplast == true && LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_3) == false)
 		{
@@ -140,7 +120,7 @@ void Mono(atomic<bool>& close)
 		delete[] name;					//delete temp crap
 		scene = L"";
 
-		if(obs_output_active(obs_get_output_by_name(streamName[indx])))	//streaming
+		if(obs_frontend_streaming_active() || obs_frontend_recording_active())	//streaming
 		{
 			//LogiLcdMonoSetBackground(mono_background_started);
 			/*if(OBSGetMicMuted() && OBSGetDesktopMuted())
@@ -174,14 +154,14 @@ void Mono(atomic<bool>& close)
 
 			//fps and bitrate
 			fpsbyte << L"FPS: ";
-			getFPS(fps, lastframes, fpslastime, streamName[indx]);
+			getFPS(fps, lastframes, fpslastime);//, streamName[indx]);
 			if(fps < 10)
 			{
 				fpsbyte << L"0";
 			}
 			fpsbyte << fps << L"      Bitrate: ";
 			
-			getbps(bitrate, lastbytes, bpslastime, streamName[indx]);
+			getbps(bitrate, lastbytes, bpslastime);//, streamName[indx]);
 			fpsbyte << int(bitrate);
 
 			wchar_t *fpsbit = new wchar_t[fpsbyte.str().length() + 1];
@@ -192,11 +172,20 @@ void Mono(atomic<bool>& close)
 
 			if(altdisplay)
 			{
+				if(obs_frontend_streaming_active())
+				{
+					output = obs_frontend_get_streaming_output();
+				}
+				else if(obs_frontend_recording_active())
+				{
+					output = obs_frontend_get_recording_output();
+				}
+
 				//dropped frames
 				frames << L"Dropped Frames: ";
-				dropped = obs_output_get_frames_dropped(obs_get_output_by_name(streamName[indx]));
+				dropped = obs_output_get_frames_dropped(output);
 				frames << dropped << L"(";
-				total  = obs_output_get_total_frames(obs_get_output_by_name(streamName[indx]));
+				total  = obs_output_get_total_frames(output);
 				percent = (double(dropped) / total) * 100;
 				frames << fixed << setprecision(2) << percent << L"%)";
 

@@ -20,13 +20,24 @@ int streamTime(int startime)
 	return uptime;
 }
 
-void getFPS(int &lastfps, int &lastframes, int &lastime, const char* streamName)
+void getFPS(int &lastfps, int &lastframes, int &lastime)
 {
 	time_t currtime;
 	time(&currtime);
+
+	obs_output_t* output;
+	if(obs_frontend_streaming_active())
+	{
+		output = obs_frontend_get_streaming_output();
+	}
+	else if(obs_frontend_recording_active())
+	{
+		output = obs_frontend_get_recording_output();
+	}
+
 	if(currtime > lastime)
 	{
-		int currframes = obs_output_get_total_frames(obs_get_output_by_name(streamName));
+		int currframes = obs_output_get_total_frames(output);
 		int fps = currframes - lastframes;
 		lastfps = fps;
 		lastframes = currframes;
@@ -35,14 +46,25 @@ void getFPS(int &lastfps, int &lastframes, int &lastime, const char* streamName)
 	return;
 }
 
-void getbps(float &lastbps, int &lastbytes, int &lastime, const char* streamName)
+void getbps(float &lastbps, int &lastbytes, int &lastime)
 {
 	//returns as kb/s
 	time_t currtime;
 	time(&currtime);
+
+	obs_output_t* output;
+	if(obs_frontend_streaming_active())
+	{
+		output = obs_frontend_get_streaming_output();
+	}
+	else if(obs_frontend_recording_active())
+	{
+		output = obs_frontend_get_recording_output();
+	}
+
 	if(currtime > lastime)
 	{
-		int currbytes = obs_output_get_total_bytes(obs_get_output_by_name(streamName));
+		int currbytes = obs_output_get_total_bytes(output);
 		int bps = currbytes - lastbytes;
 		lastbps = (bps / 1000) * 8;		//convert to kb/s
 		lastbytes = currbytes;
@@ -53,10 +75,8 @@ void getbps(float &lastbps, int &lastbytes, int &lastime, const char* streamName
 
 std::wstring getScene()
 {
-	obs_source_t * transitionUsed = obs_get_output_source(0);
-	obs_source_t * sceneUsed = obs_transition_get_active_source(transitionUsed);
+	obs_source_t* sceneUsed = obs_frontend_get_current_scene();
 	const char *sceneUsedName = obs_source_get_name(sceneUsed);
-	obs_source_release(transitionUsed);
 	obs_source_release(sceneUsed);
 	std::string sceneName = sceneUsedName;
 	std::wstring wsceneName = s2ws(sceneName);

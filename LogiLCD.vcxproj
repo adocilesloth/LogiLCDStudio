@@ -113,15 +113,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LOGILCD_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\LogitechSDK\LCDSDK_8.57.148\Lib\x86;D:\OBS\obs-studio\libobs;D:\OBS\build32\config;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\OBS\obs-studio\UI;D:\LogitechSDK\LCDSDK_8.57.148\Lib\x86;D:\OBS\obs-studio\libobs;D:\OBS\build32\config;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);D:\LogitechSDK\LCDSDK_8.57.148\Lib\x86;D:\OBS\build32\libobs\Release</AdditionalLibraryDirectories>
-      <AdditionalDependencies>LogitechLCDLib.lib;obs.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);D:\OBS\build32\UI\obs-frontend-api\Release;D:\LogitechSDK\LCDSDK_8.57.148\Lib\x86;D:\OBS\build32\libobs\Release</AdditionalLibraryDirectories>
+      <AdditionalDependencies>obs-frontend-api.lib;LogitechLCDLib.lib;obs.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -136,15 +136,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LOGILCD_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\LogitechSDK\LCDSDK_8.57.148\Lib\x64;D:\OBS\obs-studio\libobs;D:\OBS\build64\config;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\OBS\obs-studio\UI;D:\LogitechSDK\LCDSDK_8.57.148\Lib\x64;D:\OBS\obs-studio\libobs;D:\OBS\build64\config;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);D:\LogitechSDK\LCDSDK_8.57.148\Lib\x64;D:\OBS\build64\libobs\Release</AdditionalLibraryDirectories>
-      <AdditionalDependencies>LogitechLCDLib.lib;obs.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);D:\OBS\build64\UI\obs-frontend-api\Release;D:\LogitechSDK\LCDSDK_8.57.148\Lib\x64;D:\OBS\build64\libobs\Release</AdditionalLibraryDirectories>
+      <AdditionalDependencies>obs-frontend-api.lib;LogitechLCDLib.lib;obs.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>

@@ -53,41 +53,14 @@ void Dual(atomic<bool>& close)
 
 	//stream info
 	bool firstime = true;
-
-	const char* streamName[4] = {"simple_stream", "adv_stream", "simple_file_output", "adv_file_output"};
-	bool streaming = false;
-	int indx = 0;
+	obs_output_t* output;
 
 	LogiLcdColorSetTitle(L"OBS", 255, 255, 255);
 
+	Sleep(5000);
+
 	while (!close)
 	{
-		//see what's streaming if anything
-		if(obs_output_active(obs_get_output_by_name("simple_stream")))
-		{
-			indx = 0;
-			streaming = true;
-		}
-		else if(obs_output_active(obs_get_output_by_name("adv_stream")))
-		{
-			indx = 1;
-			streaming = true;
-		}
-		else if(obs_output_active(obs_get_output_by_name("simple_file_output")))
-		{
-			indx = 2;
-			streaming = true;
-		}
-		else if(obs_output_active(obs_get_output_by_name("adv_file_output")))
-		{
-			indx = 3;
-			streaming = true;
-		}
-		else
-		{
-			streaming = false;
-		}
-
 		/*MONO*/
 		//mono mute and deafen buttons
 		/*if(miclast == true &&  LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_1) == false) //button released
@@ -104,16 +77,14 @@ void Dual(atomic<bool>& close)
 		//mono stream and preview buttons
 		if(livelast == true && LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_0) == false)
 		{
-			/*if(obs_output_active(obs_get_output_by_name(streamName)))
+			if(obs_frontend_streaming_active())
 			{
-				//obs_output_stop(streamOutput);
-				streaming = !streaming;
+				obs_frontend_streaming_stop();
 			}
 			else
 			{
-				//obs_output_start(streamOutput);
-				streaming = !streaming;
-			}*/
+				obs_frontend_streaming_start();
+			}
 		}
 		if(altdisplast == true && LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_3) == false)
 		{
@@ -152,7 +123,14 @@ void Dual(atomic<bool>& close)
 		//stream and preview buttons
 		if(oklast == true &&  LogiLcdIsButtonPressed(LOGI_LCD_COLOR_BUTTON_OK) == false) //button released
 		{
-			
+			if(obs_frontend_streaming_active())
+			{
+				obs_frontend_streaming_stop();
+			}
+			else
+			{
+				obs_frontend_streaming_start();
+			}
 		}
 		if(cancellast == true &&  LogiLcdIsButtonPressed(LOGI_LCD_COLOR_BUTTON_CANCEL) == false) //button released
 		{
@@ -163,7 +141,7 @@ void Dual(atomic<bool>& close)
 
 		//get scene information
 		scene = L"Scene: ";
-		//scene.append(OBSGetSceneName());
+		scene.append(getScene());
 		wchar_t *name = new wchar_t[scene.length() + 1];
 		wcscpy(name, scene.c_str());	//convert to wchar_t
 		LogiLcdMonoSetText(1, name);
@@ -171,7 +149,7 @@ void Dual(atomic<bool>& close)
 		delete [] name;					//delete temp crap
 		scene = L"";
 
-		if(obs_output_active(obs_get_output_by_name(streamName[indx])))	//streaming
+		if(obs_frontend_streaming_active() || obs_frontend_recording_active())	//streaming
 		{
 			//LogiLcdMonoSetBackground(mono_background_started);	//button help bitmap for mono
 			if(firstime == true)
@@ -210,7 +188,7 @@ void Dual(atomic<bool>& close)
 			//fps and bitrate
 			fpsbyte << L"FPS: ";
 			sfps << L"FPS: ";
-			getFPS(fps, lastframes, fpslastime, streamName[indx]);
+			getFPS(fps, lastframes, fpslastime);
 			if(fps < 10)
 			{
 				fpsbyte << L"0";
@@ -219,7 +197,7 @@ void Dual(atomic<bool>& close)
 			fpsbyte << fps << L"      Bitrate: ";
 			sfps << fps;
 			sbyte << L"Bitrate: ";
-			getbps(bitrate, lastbytes, bpslastime, streamName[indx]);	//get as kb/s
+			getbps(bitrate, lastbytes, bpslastime);	//get as kb/s
 			fpsbyte << int(bitrate);
 			sbyte << int(bitrate) << L"kb/s";
 			//mono fps and bitrate
@@ -255,11 +233,20 @@ void Dual(atomic<bool>& close)
 			sfps.str(L"");
 			sbyte.str(L"");
 
+			if(obs_frontend_streaming_active())
+			{
+				output = obs_frontend_get_streaming_output();
+			}
+			else if(obs_frontend_recording_active())
+			{
+				output = obs_frontend_get_recording_output();
+			}
+
 			//dropped frames calculations
 			frames << L"Dropped Frames: ";
-			dropped = obs_output_get_frames_dropped(obs_get_output_by_name(streamName[indx]));
+			dropped = obs_output_get_frames_dropped(output);
 			frames << dropped << L"(";
-			total = obs_output_get_total_frames(obs_get_output_by_name(streamName[indx]));
+			total = obs_output_get_total_frames(output);
 			percent = (double(dropped)/total)*100;
 			frames << fixed << setprecision(2) << percent << L"%)";
 			wchar_t *droppedframes = new wchar_t[frames.str().length() +1];
