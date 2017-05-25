@@ -50,10 +50,20 @@ void Mono(atomic<bool>& close)
 	obs_output_t* output;
 
 	//ofstream outfile;
-	//outfile.open("D:/OBS/build32/rundir/Release/obs-plugins/32bit/outfile.txt");
+	//outfile.open("D:/OBS/build32/rundir/Release/obs-plugins/32bit/outfile2.txt");
 	//outfile << obs_output_active(streamOutput) << endl;	
-
-	Sleep(5000);
+	
+	//Wait for stuff to load or obs_frontend_streaming_active() causes a crash
+	obs_source_t* sceneUsed = obs_frontend_get_current_scene();
+	while(!sceneUsed)
+	{
+		LogiLcdMonoSetText(0, L"Open Broadcasting Software");
+		LogiLcdMonoSetText(1, L"   Loading...");
+		LogiLcdUpdate();
+		sceneUsed = obs_frontend_get_current_scene();
+		Sleep(16);
+	}
+	obs_source_release(sceneUsed);
 
 	while(!close) //Text line length  is 26 characters
 	{
@@ -72,19 +82,24 @@ void Mono(atomic<bool>& close)
 		{
 			//OBSToggleMicMute();
 		}*/
-		/*if(desklast == true && LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_2) == false) //button rleased
+		if(desklast == true && LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_2) == false) //button rleased
 		{
-			if(obs_source_muted(sceneUsed))
+			obs_source_t* sceneUsed = obs_frontend_get_current_scene();
+			if(sceneUsed)
 			{
-				obs_source_set_muted(sceneUsed, false);
+				if(obs_source_muted(sceneUsed))
+				{
+					obs_source_set_muted(sceneUsed, false);
+				}
+				else
+				{
+					obs_source_set_muted(sceneUsed, true);
+				}
+				obs_source_release(sceneUsed);
 			}
-			else
-			{
-				obs_source_set_muted(sceneUsed, true);
-			}
-		}*/
+		}
 		//miclast = LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_1);
-		//desklast = LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_2);
+		desklast = LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_2);
 		//stream and preview buttons
 		if(livelast == true && LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_0) == false)
 		{
@@ -136,7 +151,7 @@ void Mono(atomic<bool>& close)
 				LogiLcdMonoSetText(0,L"OBS          |Deaf   live\u25CF");
 			}
 			else
-			{*/
+			{*///-------------------------------------------------------------------------------------------------
 				LogiLcdMonoSetText(0, L"OBS                  live\u25CF");
 			//}
 			
@@ -239,7 +254,7 @@ void Mono(atomic<bool>& close)
 				LogiLcdMonoSetText(0, L"OBS          |Deaf       \u25CB");
 			}
 			else
-			{*/
+			{*///-------------------------------------------------------------------------------------------
 				LogiLcdMonoSetText(0, L"OBS                      \u25CB");
 			//}
 

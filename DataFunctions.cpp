@@ -76,7 +76,15 @@ void getbps(float &lastbps, int &lastbytes, int &lastime)
 std::wstring getScene()
 {
 	obs_source_t* sceneUsed = obs_frontend_get_current_scene();
+	if(sceneUsed == nullptr)
+	{
+		return L"Loading...";
+	}
 	const char *sceneUsedName = obs_source_get_name(sceneUsed);
+	if(sceneUsedName == nullptr)
+	{
+		return L"Loading...";
+	}
 	obs_source_release(sceneUsed);
 	std::string sceneName = sceneUsedName;
 	std::wstring wsceneName = s2ws(sceneName);

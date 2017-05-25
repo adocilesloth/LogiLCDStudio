@@ -56,8 +56,20 @@ void Dual(atomic<bool>& close)
 	obs_output_t* output;
 
 	LogiLcdColorSetTitle(L"OBS", 255, 255, 255);
-
-	Sleep(5000);
+	
+	//Wait for stuff to load or obs_frontend_streaming_active() causes a crash
+	obs_source_t* sceneUsed = obs_frontend_get_current_scene();
+	while(!sceneUsed)
+	{
+		LogiLcdMonoSetText(0, L"Open Broadcasting Software");
+		LogiLcdMonoSetText(1, L"   Loading...");
+		LogiLcdColorSetText(0, L"Open Broadcasting Software", 255, 255, 255);
+		LogiLcdColorSetText(2, L"   Loading...", 255, 255, 255);
+		LogiLcdUpdate();
+		sceneUsed = obs_frontend_get_current_scene();
+		Sleep(16);
+	}
+	obs_source_release(sceneUsed);
 
 	while (!close)
 	{
