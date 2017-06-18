@@ -1,7 +1,8 @@
 /*******************************************
-A Docile Sloth 2016 (adocilesloth@gmail.com)
+A Docile Sloth 2017 (adocilesloth@gmail.com)
 *******************************************/
 #include "LCDThreads.h"
+#include "mono_background.h"
 
 using namespace std;
 
@@ -75,16 +76,16 @@ void Dual(atomic<bool>& close)
 	{
 		/*MONO*/
 		//mono mute and deafen buttons
-		/*if(miclast == true &&  LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_1) == false) //button released
+		if(miclast == true &&  LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_1) == false) //button released
 		{
-			OBSToggleMicMute();
+			toggleMute();
 		}
 		if(desklast == true && LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_2) == false) //button rleased
 		{
-			OBSToggleDesktopMute();
+			toggleDeaf();
 		}
 		miclast = LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_1);
-		desklast = LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_2);*/
+		desklast = LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_2);
 
 		//mono stream and preview buttons
 		if(livelast == true && LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_0) == false)
@@ -114,21 +115,21 @@ void Dual(atomic<bool>& close)
 		//mute and deafen buttons
 		if(leftlast == true &&  LogiLcdIsButtonPressed(LOGI_LCD_COLOR_BUTTON_LEFT) == false) //button released
 		{
-			//OBSToggleMicMute();
+			toggleMute();
 		}
 		if(rightlast == true && LogiLcdIsButtonPressed(LOGI_LCD_COLOR_BUTTON_RIGHT) == false) //button rleased
 		{
-			//OBSToggleDesktopMute();
+			toggleDeaf();
 		}
 		leftlast = LogiLcdIsButtonPressed(LOGI_LCD_COLOR_BUTTON_LEFT);
 		rightlast = LogiLcdIsButtonPressed(LOGI_LCD_COLOR_BUTTON_RIGHT);
 		if(uplast == true &&  LogiLcdIsButtonPressed(LOGI_LCD_COLOR_BUTTON_UP) == false) //button released
 		{
-			//OBSToggleMicMute();
+			toggleMute();
 		}
 		if(downlast == true && LogiLcdIsButtonPressed(LOGI_LCD_COLOR_BUTTON_DOWN) == false) //button rleased
 		{
-			//OBSToggleDesktopMute();
+			toggleDeaf();
 		}
 		uplast = LogiLcdIsButtonPressed(LOGI_LCD_COLOR_BUTTON_UP);
 		downlast = LogiLcdIsButtonPressed(LOGI_LCD_COLOR_BUTTON_DOWN);
@@ -163,7 +164,7 @@ void Dual(atomic<bool>& close)
 
 		if(obs_frontend_streaming_active() || obs_frontend_recording_active())	//streaming
 		{
-			//LogiLcdMonoSetBackground(mono_background_started);	//button help bitmap for mono
+			LogiLcdMonoSetBackground(mono_background_started);	//button help bitmap for mono
 			if(firstime == true)
 			{
 				firstime = false;
@@ -176,26 +177,26 @@ void Dual(atomic<bool>& close)
 				lastbytes = 0;
 			}
 
-			/*if(OBSGetMicMuted() && OBSGetDesktopMuted())
+			if(getMute() && getDeaf())
 			{
 				LogiLcdMonoSetText(0, L"OBS     Mute||Deaf       \u25CF");
 				LogiLcdColorSetText(6, L"Muted and Deafened", 255, 0, 0);
 			}
-			else if(OBSGetMicMuted() && !OBSGetDesktopMuted())
+			else if(getMute() && !getDeaf())
 			{
 				LogiLcdMonoSetText(0, L"OBS     Mute|            \u25CF");
 				LogiLcdColorSetText(6, L"Muted", 255, 126, 0);
 			}
-			else if(!OBSGetMicMuted() && OBSGetDesktopMuted())
+			else if(!getMute() && getDeaf())
 			{
 				LogiLcdMonoSetText(0, L"OBS          |Deaf       \u25CF");
 				LogiLcdColorSetText(6, L"Deafened", 255, 126, 0);
 			}
 			else
-			{*/
+			{
 				LogiLcdMonoSetText(0, L"OBS                      \u25CF");
 				LogiLcdColorSetText(6, L"", 0, 0, 0);
-			//}
+			}
 
 			//fps and bitrate
 			fpsbyte << L"FPS: ";
@@ -319,28 +320,28 @@ void Dual(atomic<bool>& close)
 		}
 		else
 		{
-			//LogiLcdMonoSetBackground(mono_background_stopped);	//button help bitmap for mono
+			LogiLcdMonoSetBackground(mono_background_stopped);	//button help bitmap for mono
 			LogiLcdColorSetText(0, L"", 0, 0, 0);
-			/*if(OBSGetMicMuted() && OBSGetDesktopMuted())
+			if(getMute() && getDeaf())
 			{
 				LogiLcdMonoSetText(0, L"OBS     Mute||Deaf       \u25CB");
 				LogiLcdColorSetText(6, L"Muted and Deafened", 255, 0, 0);
 			}
-			else if(OBSGetMicMuted() && !OBSGetDesktopMuted())
+			else if(getMute() && !getDeaf())
 			{
 				LogiLcdMonoSetText(0, L"OBS     Mute|            \u25CB");
 				LogiLcdColorSetText(6, L"Muted", 255, 126, 0);
 			}
-			else if(!OBSGetMicMuted() && OBSGetDesktopMuted())
+			else if(!getMute() && getDeaf())
 			{
 				LogiLcdMonoSetText(0, L"OBS          |Deaf       \u25CB");
 				LogiLcdColorSetText(6, L"Deafened", 255, 126, 0);
 			}
 			else
-			{*/
+			{
 				LogiLcdMonoSetText(0, L"OBS                      \u25CB");
 				LogiLcdColorSetText(6, L"", 0, 0, 0);
-			//}
+			}
 
 			LogiLcdColorSetText(0, L"", 0, 0, 0);
 

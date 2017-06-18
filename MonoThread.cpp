@@ -1,8 +1,9 @@
 /*******************************************
-A Docile Sloth 2016 (adocilesloth@gmail.com)
+A Docile Sloth 2017 (adocilesloth@gmail.com)
 *******************************************/
 
 #include "LCDThreads.h"
+#include "mono_background.h"
 //#include <fstream>
 
 using namespace std;
@@ -41,17 +42,9 @@ void Mono(atomic<bool>& close)
 	int hour;
 	wstringstream stime;
 
-	//volume and mic levels
-	float mvol;		//mic volume
-	float dvol;		//desktop volume
-
 	//stream info
 	bool firstime = true;
 	obs_output_t* output;
-
-	//ofstream outfile;
-	//outfile.open("D:/OBS/build32/rundir/Release/obs-plugins/32bit/outfile2.txt");
-	//outfile << obs_output_active(streamOutput) << endl;	
 	
 	//Wait for stuff to load or obs_frontend_streaming_active() causes a crash
 	obs_source_t* sceneUsed = obs_frontend_get_current_scene();
@@ -64,41 +57,19 @@ void Mono(atomic<bool>& close)
 		Sleep(16);
 	}
 	obs_source_release(sceneUsed);
-
+	
 	while(!close) //Text line length  is 26 characters
 	{
-		//see what's streaming if anything
-		/*if(obs_frontend_streaming_active() || obs_frontend_recording_active())
+		//mute and deafen buttons
+		if(miclast == true && LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_1) == false) //button released
 		{
-			streaming = true;
+			toggleMute();
 		}
-		else
-		{
-			streaming = false;
-		}*/
-
-		///mute and deafen buttons
-		/*if(miclast == true && LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_1) == false) //button released
-		{
-			//OBSToggleMicMute();
-		}*/
 		if(desklast == true && LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_2) == false) //button rleased
 		{
-			obs_source_t* sceneUsed = obs_frontend_get_current_scene();
-			if(sceneUsed)
-			{
-				if(obs_source_muted(sceneUsed))
-				{
-					obs_source_set_muted(sceneUsed, false);
-				}
-				else
-				{
-					obs_source_set_muted(sceneUsed, true);
-				}
-				obs_source_release(sceneUsed);
-			}
+			toggleDeaf();
 		}
-		//miclast = LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_1);
+		miclast = LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_1);
 		desklast = LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_2);
 		//stream and preview buttons
 		if(livelast == true && LogiLcdIsButtonPressed(LOGI_LCD_MONO_BUTTON_0) == false)
@@ -137,23 +108,23 @@ void Mono(atomic<bool>& close)
 
 		if(obs_frontend_streaming_active() || obs_frontend_recording_active())	//streaming
 		{
-			//LogiLcdMonoSetBackground(mono_background_started);
-			/*if(OBSGetMicMuted() && OBSGetDesktopMuted())
+			LogiLcdMonoSetBackground(mono_background_started);
+			if(getMute() && getDeaf())
 			{
 				LogiLcdMonoSetText(0, L"OBS     Mute||Deaf   live\u25CF");
 			}
-			else if(OBSGetMicMuted() && !OBSGetDesktopMuted())
+			else if(getMute() && !getDeaf())
 			{
 				LogiLcdMonoSetText(0, L"OBS     Mute|        live\u25CF");
 			}
-			else if(!OBSGetMicMuted() && OBSGetDesktopMuted())
+			else if(!getMute() && getDeaf())
 			{
 				LogiLcdMonoSetText(0,L"OBS          |Deaf   live\u25CF");
 			}
 			else
-			{*///-------------------------------------------------------------------------------------------------
+			{
 				LogiLcdMonoSetText(0, L"OBS                  live\u25CF");
-			//}
+			}
 			
 			if(firstime == true)
 			{
@@ -240,23 +211,23 @@ void Mono(atomic<bool>& close)
 		}//end of streaming
 		else
 		{
-			//LogiLcdMonoSetBackground(mono_background_stopped);
-			/*if(OBSGetMicMuted() && OBSGetDesktopMuted())
+			LogiLcdMonoSetBackground(mono_background_stopped);
+			if(getMute() && getDeaf())
 			{
 				LogiLcdMonoSetText(0, L"OBS     Mute||Deaf       \u25CB");
 			}
-			else if(OBSGetMicMuted() && !OBSGetDesktopMuted())
+			else if(getMute() && !getDeaf())
 			{
 				LogiLcdMonoSetText(0, L"OBS     Mute|            \u25CB");
 			}
-			else if(!OBSGetMicMuted() && OBSGetDesktopMuted())
+			else if(!getMute() && getDeaf())
 			{
 				LogiLcdMonoSetText(0, L"OBS          |Deaf       \u25CB");
 			}
 			else
-			{*///-------------------------------------------------------------------------------------------
+			{//-------------------------------------------------------------------------------------------
 				LogiLcdMonoSetText(0, L"OBS                      \u25CB");
-			//}
+			}
 
 			LogiLcdMonoSetText(2, L"FPS: --      Bitrate: ----");
 

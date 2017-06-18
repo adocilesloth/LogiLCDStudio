@@ -41,5 +41,8 @@
     <ClInclude Include="DataFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mono_background.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

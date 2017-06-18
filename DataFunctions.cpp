@@ -1,5 +1,5 @@
 /*******************************************
-A Docile Sloth 2016 (adocilesloth@gmail.com)
+A Docile Sloth 2017 (adocilesloth@gmail.com)
 *******************************************/
 #include "DataFunctions.h"
 #include <Windows.h>
@@ -89,4 +89,139 @@ std::wstring getScene()
 	std::string sceneName = sceneUsedName;
 	std::wstring wsceneName = s2ws(sceneName);
 	return wsceneName;
+}
+
+bool getMute()
+{
+	obs_source_t* sceneUsed = obs_get_output_source(3);
+	if(sceneUsed)
+	{
+		if(obs_source_muted(sceneUsed))
+		{
+			obs_source_release(sceneUsed);
+			return true;
+		}
+		obs_source_release(sceneUsed);
+	}
+	sceneUsed = obs_get_output_source(4);
+	if(sceneUsed)
+	{
+		if(obs_source_muted(sceneUsed))
+		{
+			obs_source_release(sceneUsed);
+			return true;
+		}
+		obs_source_release(sceneUsed);
+	}
+	sceneUsed = obs_get_output_source(5);
+	if(sceneUsed)
+	{
+		if(obs_source_muted(sceneUsed))
+		{
+			obs_source_release(sceneUsed);
+			return true;
+		}
+		obs_source_release(sceneUsed);
+	}
+	return false;
+}
+
+void toggleMute()
+{
+	obs_source_t* sceneUsed = obs_get_output_source(3);
+	if(sceneUsed)
+	{
+		if(obs_source_muted(sceneUsed))
+		{
+			obs_source_set_muted(sceneUsed, false);
+		}
+		else
+		{
+			obs_source_set_muted(sceneUsed, true);
+		}
+		obs_source_release(sceneUsed);
+	}
+	sceneUsed = obs_get_output_source(4);
+	if(sceneUsed)
+	{
+		if(obs_source_muted(sceneUsed))
+		{
+			obs_source_set_muted(sceneUsed, false);
+		}
+		else
+		{
+			obs_source_set_muted(sceneUsed, true);
+		}
+		obs_source_release(sceneUsed);
+	}
+	sceneUsed = obs_get_output_source(5);
+	if(sceneUsed)
+	{
+		if(obs_source_muted(sceneUsed))
+		{
+			obs_source_set_muted(sceneUsed, false);
+		}
+		else
+		{
+			obs_source_set_muted(sceneUsed, true);
+		}
+		obs_source_release(sceneUsed);
+	}
+	return;
+}
+
+bool getDeaf()
+{
+	obs_source_t* sceneUsed = obs_get_output_source(1);
+	if(sceneUsed)
+	{
+		if(obs_source_muted(sceneUsed))
+		{
+			obs_source_release(sceneUsed);
+			return true;
+		}
+		obs_source_release(sceneUsed);
+	}
+	sceneUsed = obs_get_output_source(2);
+	if (sceneUsed)
+	{
+		if (obs_source_muted(sceneUsed))
+		{
+			obs_source_release(sceneUsed);
+			return true;
+		}
+		obs_source_release(sceneUsed);
+	}
+	return false;
+}
+
+void toggleDeaf()
+{
+	obs_source_t* sceneUsed = obs_get_output_source(1);
+	if(sceneUsed)
+	{
+		if(obs_source_muted(sceneUsed))
+		{
+			obs_source_set_muted(sceneUsed, false);
+		}
+		else
+		{
+			obs_source_set_muted(sceneUsed, true);
+		}
+		obs_source_release(sceneUsed);
+	}
+	sceneUsed = obs_get_output_source(2);
+	if(sceneUsed)
+	{
+		if(obs_source_muted(sceneUsed))
+		{
+			obs_source_set_muted(sceneUsed, false);
+		}
+		else
+		{
+			obs_source_set_muted(sceneUsed, true);
+		}
+		obs_source_release(sceneUsed);
+	}
+	return;
 }

@@ -1,5 +1,5 @@
 /*******************************************
-A Docile Sloth 2016 (adocilesloth@gmail.com)
+A Docile Sloth 2017 (adocilesloth@gmail.com)
 *******************************************/
 
 #include "LCDThreads.h"
@@ -44,10 +44,6 @@ void Colour(atomic<bool>& close)
 	int hour;
 	wstringstream stime;
 
-	//volume and mic levels
-	float mvol;		//mic volume
-	float dvol;		//desktop volume
-
 	//stream info
 	bool firstime = true;
 	obs_output_t* output;
@@ -71,21 +67,21 @@ void Colour(atomic<bool>& close)
 		//mute and deafen buttons
 		if(leftlast == true &&  LogiLcdIsButtonPressed(LOGI_LCD_COLOR_BUTTON_LEFT) == false) //button released
 		{
-			//OBSToggleMicMute();
+			toggleMute();
 		}
 		if(rightlast == true && LogiLcdIsButtonPressed(LOGI_LCD_COLOR_BUTTON_RIGHT) == false) //button rleased
 		{
-			//OBSToggleDesktopMute();
+			toggleDeaf();
 		}
 		leftlast = LogiLcdIsButtonPressed(LOGI_LCD_COLOR_BUTTON_LEFT);
 		rightlast = LogiLcdIsButtonPressed(LOGI_LCD_COLOR_BUTTON_RIGHT);
 		if(uplast == true &&  LogiLcdIsButtonPressed(LOGI_LCD_COLOR_BUTTON_UP) == false) //button released
 		{
-			//OBSToggleMicMute();
+			toggleMute();
 		}
 		if(downlast == true && LogiLcdIsButtonPressed(LOGI_LCD_COLOR_BUTTON_DOWN) == false) //button rleased
 		{
-			//OBSToggleDesktopMute();
+			toggleDeaf();
 		}
 		uplast = LogiLcdIsButtonPressed(LOGI_LCD_COLOR_BUTTON_UP);
 		downlast = LogiLcdIsButtonPressed(LOGI_LCD_COLOR_BUTTON_DOWN);
@@ -170,7 +166,6 @@ void Colour(atomic<bool>& close)
 			delete [] wbit;
 			sbyte.str(L"");
 
-			obs_output_t* output;
 			if(obs_frontend_streaming_active())
 			{
 				output = obs_frontend_get_streaming_output();
@@ -239,22 +234,22 @@ void Colour(atomic<bool>& close)
 			LogiLcdColorSetText(5, L"Stream Uptime: -:--:--", 255, 255, 255);
 		}
 
-		/*if(OBSGetMicMuted() && OBSGetDesktopMuted())
+		if(getMute() && getDeaf())
 		{
 			LogiLcdColorSetText(6, L"Muted and Deafened", 255, 0, 0);
 		}
-		else if(OBSGetMicMuted() && !OBSGetDesktopMuted())
+		else if(getMute() && !getDeaf())
 		{
 			LogiLcdColorSetText(6, L"Muted", 255, 126, 0);
 		}
-		else if(!OBSGetMicMuted() && OBSGetDesktopMuted())
+		else if(!getMute() && getDeaf())
 		{
 			LogiLcdColorSetText(6, L"Deafened", 255, 126, 0);
 		}
 		else
-		{*/
-		LogiLcdColorSetText(6, L"", 0, 0, 0);
-		//}
+		{
+			LogiLcdColorSetText(6, L"", 0, 0, 0);
+		}
 		//update screen
 		LogiLcdUpdate();
 
