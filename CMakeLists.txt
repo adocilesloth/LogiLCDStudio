@@ -10,9 +10,9 @@ else( CMAKE_SIZEOF_VOID_P EQUAL 8 )
   set( LCDSDK_LIB_PATH "${LCDSDK_PATH}/Lib/x32" )
 endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
-if (not WIN32)
+if(NOT WIN32)
 	set(DISABLE_LOGILCDSTUDIO 1)
-endif(not WIN32)
+endif(NOT WIN32)
 
 if(DISABLE_LOGILCDSTUDIO)
 	message(STATUS "LogiLCDStudio plugin disabled")
